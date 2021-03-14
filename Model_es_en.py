@@ -31,7 +31,13 @@ class Model_es_en:
         print(tokenizer.supported_language_codes)
         model = MarianMTModel.from_pretrained(model_name)
         translated = model.generate(**tokenizer.prepare_seq2seq_batch(list_src_es_sentences, return_tensors="pt"))
-        tgt_text = [tokenizer.decode(t, skip_special_tokens=True) for t in translated]
-        print("tgt_text")
-        print(tgt_text)
+        list_trans_sentences_es_en = [tokenizer.decode(t, skip_special_tokens=True) for t in translated]
+        print("Results:")
+        print(list_trans_sentences_es_en)
+        self.write_en_sentences(list_trans_sentences_es_en)
         print("Translation done")
+
+    def write_en_sentences(self,list_es_sentences):
+        with open('resources/generated_tedx_english_corpora.txt', 'w') as file:
+            file.write(str(list_es_sentences))
+
