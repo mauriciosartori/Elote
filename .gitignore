@@ -2,3 +2,4 @@
 *.xml
 *.pyc
 *.pyc
+resources/generated_tedx_english_corpora.txt
