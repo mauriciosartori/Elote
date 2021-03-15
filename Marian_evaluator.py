@@ -15,7 +15,7 @@ def translate_from_MarianModel(model_name, list_src_es_sentences):
 
 
 class Marian_evaluator:
-    number_of_sentence_to_evaluate = 3
+    number_of_sentence_to_evaluate = 50
 
     def get_list_sentences(self, corpora_name):
         with open(corpora_name) as file:
