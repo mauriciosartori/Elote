@@ -17,7 +17,7 @@ def translate_from_MarianModel(model_name, list_src_es_sentences):
 
 
 class Marian_evaluator:
-    number_of_sentence_to_evaluate = 1500
+    number_of_sentence_to_evaluate = 200
 
     def get_list_sentences(self, corpora_name):
         with open(corpora_name) as file:
@@ -71,28 +71,28 @@ class Marian_evaluator:
 
     def translate_sentences_en_to_es(self):
         print("Translating sentences from English to Spanish...")
-        list_src_en_sentences = self.get_list_sentences('resources/generated_tedx_english_corpora.txt')
+        list_src_en_sentences = self.get_list_sentences('resources/candidate_sentences.txt')
 
         model_name = 'Helsinki-NLP/opus-mt-en-es'
         list_trans_sentences_en_es = translate_from_MarianModel(model_name, list_src_en_sentences)
-        write_sentences_in_file(list_trans_sentences_en_es, 'resources/results_tedx_spanish_corpora.txt')
+        write_sentences_in_file(list_trans_sentences_en_es, 'resources/candidate_sentences_translated.txt')
         print("Translation done")
 
     def evaluate_results(self):
-        # In order to do this evaluation, we have to compare the sentences
-        # that are the result of the translation EN-ES with the original es corpus
-
-        # List of sentences from base ES corpus
-        list_base_es_sentences = self.get_list_sentences('resources/base_tedx_spanish_corpora.txt')
 
         # List of sentences from the ES result set
-        list_results_es_sentences = self.get_list_sentences('resources/results_tedx_spanish_corpora.txt')
+        list_results_es_sentences = self.get_list_sentences('resources/candidate_sentences_translated.txt')
+        list_male_genre_sentences = []
+        for sentence in list_results_es_sentences:
+            if "el" in sentence or "El" in sentence:
+                start_index = sentence.find("el")
+                if start_index == -1:
+                    start_index = sentence.find("El")
+                if len(sentence) > start_index + 5:
+                    word_context = sentence[start_index:]
+                    sentence_array = word_context.split()
+                    article_noun_sentence = sentence_array[0] + " " + sentence_array[1] + " - " + sentence
+                    list_male_genre_sentences.append(article_noun_sentence)
 
-        # We compare each sentence and only perform analysis if it is different
-        for index in range(0, len(list_base_es_sentences), 1):
-            if list_base_es_sentences[index] == list_results_es_sentences[index]:
-                print("This string ins the same")
-            else:
-                print(list_base_es_sentences[index])
-                print(list_results_es_sentences[index])
-                print("-----------------------")
+        write_sentences_in_file(list_male_genre_sentences, 'resources/results_male_genre_sentences.txt')
+        print("-----------------------")
