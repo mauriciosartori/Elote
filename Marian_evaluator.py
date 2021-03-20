@@ -72,14 +72,23 @@ class Marian_evaluator:
     def translate_sentences_en_to_es(self):
         print("Translating sentences from English to Spanish...")
         list_src_en_sentences = self.get_list_sentences('resources/candidate_sentences.txt')
-        new_list_sentences = []
+        sentences_with_the = []
+
         for sentence in list_src_en_sentences:
             if "The" in sentence or "the" in sentence:
-                new_list_sentences.append(sentence)
+                sentences_with_the.append(sentence)
 
-        model_name = 'Helsinki-NLP/opus-mt-en-es'
-        list_trans_sentences_en_es = translate_from_MarianModel(model_name, new_list_sentences)
-        write_sentences_in_file(list_trans_sentences_en_es, 'resources/candidate_sentences_translated.txt')
+        current_index = 0
+        for group_index in range(0, 10, +1):
+            sub_list_sentences = []
+            for index in range(current_index, current_index + 70, +1):
+                sub_list_sentences.append(sentences_with_the[current_index])
+                current_index += 1
+            model_name = 'Helsinki-NLP/opus-mt-en-es'
+            list_trans_sentences_en_es = translate_from_MarianModel(model_name, sub_list_sentences)
+            file_name = 'resources/' + str(current_index) + 'candidate_sentences_translated.txt'
+            write_sentences_in_file(list_trans_sentences_en_es, str(file_name))
+
         print("Translation done")
 
     def evaluate_results(self):
@@ -89,20 +98,20 @@ class Marian_evaluator:
         list_male_genre_sentences = []
         for sentence in list_results_es_sentences:
             if " el" in sentence \
-                    or "El" in sentence \
-                    or "La" in sentence \
-                    or " la" in sentence \
-                    or "Los" in sentence:
-                start_index = sentence.find(" el")
+                    or "El " in sentence \
+                    or "La " in sentence \
+                    or " la " in sentence \
+                    or "Los " in sentence:
+                start_index = sentence.find(" el ")
                 if start_index == -1:
-                    start_index = sentence.find("El")
+                    start_index = sentence.find("El ")
                 if start_index == -1:
-                    start_index = sentence.find("La")
+                    start_index = sentence.find("La ")
                 if start_index == -1:
-                    start_index = sentence.find(" la")
+                    start_index = sentence.find(" la ")
                 if start_index == -1:
-                    start_index = sentence.find("Los")
-                if len(sentence) > start_index + 5:
+                    start_index = sentence.find("Los ")
+                if start_index != -1 and len(sentence) > start_index + 5:
                     word_context = sentence[start_index:]
                     sentence_array = word_context.split()
                     article_noun_sentence = sentence_array[0] + " " + sentence_array[1] + " - " + sentence
