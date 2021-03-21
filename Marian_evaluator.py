@@ -95,7 +95,7 @@ class Marian_evaluator:
 
         # List of sentences from the ES result set
         list_results_es_sentences = self.get_list_sentences('resources/candidate_sentences_translated.txt')
-        list_male_genre_sentences = []
+        list_multi_gender_sentences = []
         for sentence in list_results_es_sentences:
             if " el" in sentence \
                     or "El " in sentence \
@@ -115,7 +115,7 @@ class Marian_evaluator:
                     word_context = sentence[start_index:]
                     sentence_array = word_context.split()
                     article_noun_sentence = sentence_array[0] + " " + sentence_array[1] + " - " + sentence
-                    list_male_genre_sentences.append(article_noun_sentence)
+                    list_multi_gender_sentences.append(article_noun_sentence)
 
-        write_sentences_in_file(list_male_genre_sentences, 'resources/results_male_genre_sentences.txt')
+        write_sentences_in_file(list_multi_gender_sentences, 'resources/results_multi_gender_sentences.txt')
         print("-----------------------")
